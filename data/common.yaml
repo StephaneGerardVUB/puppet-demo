@@ -1,25 +1,11 @@
 ---
-message: "This is our common!"
+message: "This is the deepest hiera level, common to all nodes"
 
 
 classes:
-  - iihe::base
-
-ntp::enable: true
-ntp::servers:
-  - '192.168.9.75'
-ntp::restrict:
-  - 'default nomodify notrap noquery'
-  - '127.0.0.1'
-  - '-6 ::1'
-chrony::servers:
-  - '192.168.9.75'
-# packages that should be installed everywhere (via the base profile)
-packages_to_install:
-  - mlocate
-  - net-tools
-  - zsh
-  - jq
-  - ncdu
-  - rsync
-  - vim
+  - profile::ntp
+  - profile::puppet
+  - profile::ssh
+  - profile::sudoers
+  - profile::timezone
+  - profile::users
