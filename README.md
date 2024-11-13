@@ -12,10 +12,30 @@ Once the server is set up, you still have two steps to get your machines under c
 
 It is natural to achieve these 2 steps with the help of the provisioning system (Foreman or Quattor or...).
 
-## Bootstrapping for automatic enrollement
+## Bootstrapping for automatic enrollment
 
-- Installation of the agent
-- Configuration of the agen
+### Installation of the agent (RH-like only)
+1. Add the Puppet repo file
+2. Install 'puppet-agent' package
+3. The facter application needs lsb_release binary:
+   - Under EL8 -> package 'redhat-lsb-core'
+   - Under EL9 -> package 'lsb_release'
+4. Make sure service 'puppet' is enabled and on.
+
+### Configuration of the agent
+
+The agent configuration file is ```/etc/puppetlabs/puppet/puppet.conf``` with the following typical content:
+
+```
+[agent]
+certname=<fqdn_puppet_node>
+environment=production
+logdest=/var/log/puppetlabs/puppet/puppet.log
+report=true
+runinterval=1h
+server=<fqdn_pupper_server>
+```
+
 
 ## Node classification
 
