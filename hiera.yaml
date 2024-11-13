@@ -1,0 +1,34 @@
+---
+version: 5
+defaults:
+  # The default value for "datadir" is "data" under the same directory as the hiera.yaml
+hierarchy:
+  - name: "Per-node data"
+    paths:
+      - "nodes/%{trusted.certname}.yaml"
+
+  - name: "Per-hardware generation data"
+    paths:
+      - "generations/%{::generation}.yaml"
+
+  - name: "Per-role data"
+    paths:
+      - "roles/%{::app}/%{::role}.yaml"
+
+  - name: "Per-application data"
+    paths:
+      - "apps/%{::app}.yaml"
+
+  - name: "Per-OS-major-release data"
+    path: "oses/%{facts.os.family}/%{facts.os.release.major}.yaml"
+
+  - name: "Per-OS default data"
+    path: "oses/%{facts.os.family}.yaml"
+  
+  - name: "Per-environment data"
+    paths:
+      - "environments/%{::environment}.yaml"
+
+  - name: "Common data"
+    path: "common.yaml"
+

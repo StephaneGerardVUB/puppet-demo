@@ -1,0 +1,25 @@
+---
+message: "This is our common!"
+
+
+classes:
+  - iihe::base
+
+ntp::enable: true
+ntp::servers:
+  - '192.168.9.75'
+ntp::restrict:
+  - 'default nomodify notrap noquery'
+  - '127.0.0.1'
+  - '-6 ::1'
+chrony::servers:
+  - '192.168.9.75'
+# packages that should be installed everywhere (via the base profile)
+packages_to_install:
+  - mlocate
+  - net-tools
+  - zsh
+  - jq
+  - ncdu
+  - rsync
+  - vim
