@@ -64,7 +64,7 @@ vardir=/opt/puppetlabs/server/data/puppetserver
 EOF
 
 # Configure Puppet Server memory allocation
-sed -i 's/JAVA_ARGS.*/JAVA_ARGS="-Xms512m -Xmx512m -XX:MaxPermSize=256m"/' /etc/sysconfig/puppetserver
+sed -i 's/JAVA_ARGS=.*/JAVA_ARGS="-Xms2g -Xmx2g -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"/' /etc/sysconfig/puppetserver
 
 # Set Puppet Server to start on boot
 systemctl enable puppetserver
@@ -73,6 +73,8 @@ systemctl enable puppetserver
 systemctl start puppetserver
 
 # Configure firewall to allow Puppet traffic
+systemctl enable firewalld
+systemctl start firewalld
 firewall-cmd --permanent --add-port=8140/tcp
 firewall-cmd --reload
 
