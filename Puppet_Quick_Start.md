@@ -21,10 +21,28 @@ Puppet is configuration management system to manage an IT infrastructure as a co
 
 Puppet code is made of resource declarations. Resources are the fundamental units of the machine configuration, they are based on builtin native types (package, service, user, group,...). Each resource has a type, a name, and some attributes. They can be linked.
 
+All resource declarations follow the same general pattern:
+
+```
+RESOURCE_TYPE { TITLE:
+  ATTRIBUTE => VALUE,
+  ...
+}
+```
+
+The main builtin resource types available natively are: file, package, service, user, cron, exec.
+
+Many resource types have an **ensure** attribute that can take different values according to the type.
+
+Resource types can be extended, you can create your own, but that's another long story...
+
+
 ### Classes
+
 Blocks of code that can be reused. They are made of resources and/or other classes. Classes are defined in the manifests. Classes are assigned to a node either using an ENC (External Node Classifier) or by declaring it in a manifest. Classes can be parametrized. Classes are linkable.
 
 ### Modules
+
 Thematic collections of classes and their dependencies. The organization of the files is standardized. Modules can be viewed as packaging system to share classes with the communities via [**Puppet Forge**](https://forge.puppet.com/).
 
 ![https://puppet.com!](/1_DOwssrDzC5KrUG4-41cMAA.webp "Icons of resources, classes and modules")
@@ -47,11 +65,103 @@ The facts can be extended by the sysadmins using custom facts.
 
 ### Packages
 
+* Declaring a package:
+
+  ```
+  package { 'openssl':
+    ensure => installed,
+  }
+  ```
+
+* Removing a package:
+
+  ```
+  package { 'apparmor':
+    ensure => absent,
+  }
+  ```
+
+* Installing a well defined release of a package:
+
+  ```
+  package { 'openssl':
+    ensure => '1.0.2g-1ubuntu4.8',
+  }
+  ```
+* Installing a Ruby gem:
+
+  ```
+  package { 'puppet-lint':
+    ensure => installed,
+    provider => gem,
+  }
+  ```
+
+  It's worth mentionning here that 'pip', 'pip2' and 'pip3' providers are also available.
+
 ### Files
+
+* File with content
+
+  ```
+  file { '/tmp/hello.txt':
+    content => "hello, world\n",
+  }
+  ```
+
+* File with content from a source file
+
+  ```
+  file { '/etc/motd':
+    source => 'puppet://modules/examples/files/motd.txt',
+  }
+  ```
+
+  This example suppose that the 'examples' module contains a directory 'files' with the file 'motd.txt' in it.
+
+* File with ownership and permissions
+
+  ```
+  file { '/tmp/hello.txt':
+    ensure => present,
+    owner => 'toto',
+    group => 'toto',
+    mode => '0644',
+  }
+  ```
+
+* Directory
+
+  ```
+  file { '/etc/myappconfdir':
+    ensure => directory,
+  }
+
+  ```
+
+* Symlink
+
+  ```
+  file { '/etc/mylink':
+    ensure => link,
+    target => '/etc/motd',
+  }
+  ```
 
 ### Services
 
+* Enable a service and make sure it is running
+
+  ```
+  service { 'ntp':
+    ensure => running,
+    enable => true,
+  }
+  ```
+
 ### Users
+
+
 
 ### Links
 
