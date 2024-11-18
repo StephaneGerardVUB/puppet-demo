@@ -3,7 +3,7 @@
 # A bunch of parameters
 PUPPET_RELEASE_MAJOR='8'
 OS_RELEASE_MAJOR='9'
-GIT_ACCOUNT='iihe'
+GIT_ACCOUNT='StephaneGerardVUB'
 GIT_REPO='puppet-demo'
 PUPPET_DEFAULT_ENV='production'
 PUPPET_SERVER=$(hostname -f)
@@ -22,18 +22,20 @@ yum install -y puppetserver git gcc rsync
 
 # Add puppet binaries to PATH via .bash_profile
 echo "export PATH=$PATH:/opt/puppetlabs/bin:/opt/puppetlabs/puppet/bin" >> /root/.bash_profile
+export PATH=$PATH:/opt/puppetlabs/bin:/opt/puppetlabs/puppet/bin
 
 # Install r10k and hiera-eyaml
 /opt/puppetlabs/puppet/bin/gem install hiera-eyaml
 /opt/puppetlabs/puppet/bin/gem install r10k
 
 # Configure r10k
+mkdir -p /etc/puppetlabs/r10k
 cat > /etc/puppetlabs/r10k/r10k.yaml << EOF
 :cachedir: "/var/cache/r10k"
 :sources:
   production:
     basedir: "/etc/puppetlabs/code/environments"
-    remote: "git@gitlab.iihe.ac.be:${GIT_ACCOUNT}/${GIT_REPO}.git"
+    remote: "git@github.com:${GIT_ACCOUNT}/${GIT_REPO}.git"
 EOF
 
 # Generate SSH key for root
@@ -77,5 +79,8 @@ systemctl enable firewalld
 systemctl start firewalld
 firewall-cmd --permanent --add-port=8140/tcp
 firewall-cmd --reload
+
+# First r10k run
+r10k deploy  environment -p production
 
 echo "Puppet Master installation and configuration complete."
