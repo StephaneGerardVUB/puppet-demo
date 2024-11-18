@@ -43,7 +43,17 @@ Information collected: CPUs brands and models, amount of memory, disk partitions
 
 The facts can be extended by the sysadmins using custom facts.
 
-## Coding
+## Coding examples
+
+### Packages
+
+### Files
+
+### Services
+
+### Users
+
+### Links
 
 ## Hiera
 
@@ -53,6 +63,45 @@ r10k is your friend
 
 ## Node classification
 
+In the Puppet terminology, to classify a node means to determine:
+- the classes to include to the node;
+- the value of parameters to pass to the included parametrized classes;
+- the environment of the node.
+
+The most basic method to classify nodes is to use node definitions in the site.pp file like in this example:
+
+```
+node 'www1.example.com' {
+  include common
+  include apache
+  include squid
+}
+node 'db1.example.com' {
+  include common
+  include mysql
+}
+```
+
+However, this approach based on the machine names might be too limited to manage large and/or complex sites.
+
+You can also classify nodes using an external node classifier (ENC), which is a script or an application that tells Puppet which classes to include to a node. The ENC can replace or work in concert with the node definitions of the main manifest (site.pp). An ENC takes as only argument the name of the node, and it returns a yaml document describing the node as in the main manifest. You can write your own ENC, or you can use the ENC functionality embedded in Foreman, or in Puppet Enterprise or in the Puppet Community Dashboard...
+
+There is a third very flexible approach that consists in using facts in conjunction with Hiera. That's the approach we are using in this workspace.
+
 ## Useful commands
 
+### On the node
+
+puppet agent -t --logdest console
+
+puppet resource package
+puppet resource user
+
+### On the Puppet server
+
+r10k deploy environment -p production
+
+puppet generate types --verbose --debug --environment production
+
+puppet module list --environment production
 
