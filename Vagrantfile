@@ -48,7 +48,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
     pm.vm.provision :shell, :inline => $set_host_file
     dir = File.expand_path("..", __FILE__)
     puts "DIR: #{dir}"
-    pm.vm.provision :shell, :path => File.join(dir, "pm_install.sh")
+    pm.vm.provision :shell, :path => File.join(dir, "vagrant_pm_install.sh")
   end
 
   # config.vm.define :puppetdb do |pm|

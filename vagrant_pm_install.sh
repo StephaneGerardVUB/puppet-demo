@@ -35,17 +35,8 @@ cat > /etc/puppetlabs/r10k/r10k.yaml << EOF
 :sources:
   production:
     basedir: "/etc/puppetlabs/code/environments"
-    remote: remote: "git@github.com:${GIT_ACCOUNT}/${GIT_REPO}.git"
+    remote: "https://github.com/${GIT_ACCOUNT}/${GIT_REPO}.git"
 EOF
-
-# Generate SSH key for root
-ssh-keygen -t rsa
-# Remind the user to add the SSH key to the git repository
-echo "Please add the SSH key to the git repository."
-# Adding github.com to the known_hosts (required by r10k)
-touch /root/.ssh/known_hosts
-ssh-keygen  -R github.com
-ssh-keyscan -H github.com >> /root/.ssh/known_hosts
 
 # Create a configuration file for Puppet Server
 cat > /etc/puppetlabs/puppet/puppet.conf << EOF
