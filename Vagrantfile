@@ -32,7 +32,13 @@ end
 $set_host_file="cat <<EOF > /etc/hosts\n"+$hostfiledata+"\nEOF\n"
 
 Vagrant.configure VAGRANTFILE_API_VERSION do |config|
-  
+
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.qemu_use_session = false
+    libvirt.memory = 4096
+    libvirt.cpus = 2
+  end
+
   config.vm.define :puppetmaster do |pm|
     pm.vm.box = "eurolinux-vagrant/rocky-8"
     config.vm.box_version = "8.10.5"
@@ -40,7 +46,9 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
     pm.vm.network :private_network, ip: "#{MASTERIP}" 
     pm.vm.network :forwarded_port, guest: 5000, host: 5000
     pm.vm.provision :shell, :inline => $set_host_file
-    pm.vm.provision :shell, :path => "pm_intall.sh"
+    dir = File.expand_path("..", __FILE__)
+    puts "DIR: #{dir}"
+    pm.vm.provision :shell, :path => File.join(dir, "pm_install.sh")
   end
 
   # config.vm.define :puppetdb do |pm|
