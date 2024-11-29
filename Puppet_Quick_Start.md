@@ -99,6 +99,15 @@ The facts can be extended by the sysadmins using custom facts.
 
   It's worth mentionning here that 'pip', 'pip2' and 'pip3' providers are also available.
 
+* Installing a list of packages:
+
+  ```
+  $packagestoinstall = ['vim', 'nano', 'git']
+  package { $packagestoinstall:
+    ensure => installed,
+  }
+  ```
+
 ### Files
 
 * File with content
@@ -161,11 +170,41 @@ The facts can be extended by the sysadmins using custom facts.
 
 ### Users
 
+* Create a group and a user in this group
 
+  ```
+  group { 'devops':
+    ensure => present,
+    gid => '3000',
+  }
 
-### Links
+  user { 'steph':
+    ensure => present,
+    uid => '3001',
+    home => '/home/steph',
+    shell => '/bin/bash',
+    groups => ['devops'],
+  }
+  ```
+
+* Removing a user
+
+  ```
+  user { 'toto':
+    ensure => absent,
+  }
+  ```
+
+### Cron
+
+### Exec
+
+### Links between resources
 
 ## Hiera
+
+
+
 
 ## Integration with Git
 
