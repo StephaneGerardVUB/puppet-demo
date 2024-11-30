@@ -5,7 +5,7 @@ message: "This is the deepest hiera level, common to all nodes"
 classes:
   - profile::ntp
   - profile::ssh
-  - profile::sudoers
+  #- profile::sudoers
   - profile::timezone
   - profile::users
 
