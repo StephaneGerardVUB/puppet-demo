@@ -14,7 +14,7 @@ profile::ssh::allow_users:
   - user1
   - user2
 
-peofile::users::users:
+profile::users::users:
   user1:
     ensure: present
     uid: 1001
