@@ -1,6 +1,20 @@
 # puppet-demo
 Typical small and simple Puppet workspace to use for demonstrations or as a starting point for real use case
 
+## Table of Contents
+
+- [puppet-demo](#puppet-demo)
+  - [Usage](#usage)
+  - [Bootstrapping for automatic enrollment](#bootstrapping-for-automatic-enrollment)
+    - [Installation of the agent (RH-like only)](#installation-of-the-agent-(rh-like-only))
+    - [Configuration of the agent](#configuration-of-the-agent)
+  - [Node classification](#node-classification)
+    - [Classification mechanism is details](#classification-mechanism-is-details)
+  - [Testing puppet-demo workspace with Vagrant](#testing-puppet-demo-workspace-with-vagrant)
+    - [Preparing your laptop for Vagrant](#preparing-your-laptop-for-vagrant)
+
+
+
 ## Usage
 
 Git clone this repo on the machine where you want to create an instance of puppetserver.
