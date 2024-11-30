@@ -114,3 +114,51 @@ node 'hypervizor.myorg.be' {
 ```
 
 
+## Testing puppet-demo workspace with Vagrant
+
+A Vagrant file was written to help you to set up a small testbed made of a puppetserver instance and some client nodes.
+
+### Preparing your laptop for Vagrant
+
+These explanations are valid for a Linux machine on which it is possible to create VMs using QEMU/KVM. It was tested on Fedora 39.
+
+Run the following commands on your laptop (you must be working with a sudoers account):
+
+```
+sudo dnf install vagrant vagrant-libvirt
+sudo usermod -a -G libvirt ${USER}
+sudo systemctl --now enable virtnetworkd.service
+sudo firewall-cmd --permanent --zone=libvirt --add-service=nfs
+sudo firewall-cmd --reload
+```
+
+Fork the puppet-demo project and create a local copy of it:
+
+```
+git clone https://github.com/<your_git_account>/puppet-demo.git
+```
+
+Instantiate the testbed:
+
+```
+cd puppet-demon
+vagrant up
+```
+
+After a few minutes, you should get at least to VMs:
+- puppetmaster.vm.local
+- node1.vm.local
+
+Check the status of these VMs with the following command:
+
+```
+vagrant status
+```
+
+You can login to them with this command:
+
+```
+vagrand ssh <vm_name>
+```
+
+You can now train yourself by trying to configure resources on the client nodes. You will find a Puppet quick start guide [here](Puppet_Quick_Start.md).
