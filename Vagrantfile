@@ -79,7 +79,10 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
         ag.vm.provision :shell, :inline => $set_host_file
         dir = File.expand_path("..", __FILE__)
         puts "DIR: #{dir}"
-        ag.vm.provision :shell, :path => File.join(dir,"vagrant_client_install.sh #{MASTERNAME}.#{DOMAIN}")
+        ag.vm.provision :shell do |s|
+          s.path = File.join(dir,"vagrant_client_install.sh")
+          s.args = "#{MASTERNAME}.#{DOMAIN}"
+        end
     end
   end  
 
