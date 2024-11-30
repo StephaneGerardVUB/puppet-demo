@@ -13,3 +13,17 @@ profile::ssh::allow_users:
   - root
   - user1
   - user2
+
+peofile::users::users:
+  user1:
+    ensure: present
+    uid: 1001
+    gid: 1001
+    groups:
+      - users
+  user2:
+    ensure: present
+    uid: 1002
+    gid: 1002
+    groups:
+      - users
