@@ -1,11 +1,15 @@
 # Manage sshd config
-class profile::ssh {
-  ensure_packages(['openssh-server'])
+class profile::ssh (
+  Array[String] $allow_users = ['root'],
+)
+{
+
+  package { 'openssh-server':
+    ensure => latest,
+  }
 
   file { '/etc/ssh/sshd_config':
-    content => epp('profile/ssh/sshd_config.epp', {
-      'allow_users' => lookup('allow_users', Array[String], 'unique'),
-    }),
+    content => epp('profile/ssh/sshd_config.epp', { 'allow_users' => $allow_users, }),
     notify  => Service['ssh'],
   }
 
