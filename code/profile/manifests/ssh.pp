@@ -8,10 +8,10 @@ class profile::ssh (
 
   file { '/etc/ssh/sshd_config':
     content => epp('profile/ssh/sshd_config.epp', { 'allow_users' => $allow_users, }),
-    notify  => Service['ssh'],
+    notify  => Service['sshd'],
   }
 
-  service { 'ssh':
+  service { 'sshd':
     ensure => running,
     enable => true,
   }
