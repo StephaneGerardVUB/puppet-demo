@@ -8,3 +8,8 @@ classes:
   - profile::sudoers
   - profile::timezone
   - profile::users
+
+profile::ssh::allow_users:
+  - root
+  - user1
+  - user2
