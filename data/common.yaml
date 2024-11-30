@@ -27,3 +27,8 @@ profile::users::users:
     gid: 1002
     groups:
       - users
+
+profile::sudoers::users:
+  - user1
+  - user2
+  - vagrant

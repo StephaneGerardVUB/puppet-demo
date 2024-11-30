@@ -1,6 +1,6 @@
 # Manage sshd config
 # Document class parameters
-# @param [Array[String]] $allow_users List of users to allow
+# @param allow_users List of users to allow
 # @example
 #   class { 'profile::ssh':
 #     allow_users => ['root', 'vagrant'],
