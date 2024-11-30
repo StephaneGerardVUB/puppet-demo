@@ -46,6 +46,7 @@ EOF
 # Classify the node -> creation of file /etc/puppetlabs/facter/facts.d/classification.yaml
 # This file will be used by Puppet to classify the node, knowing its application context (app),
 # the role it plays (role) in this application context, and the environment it belongs to (env).
+mkdir -p /etc/puppetlabs/facter/facts.d
 cat > /etc/puppetlabs/facter/facts.d/classification.yaml << EOF
 ---
 app: slurm
