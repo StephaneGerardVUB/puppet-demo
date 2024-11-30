@@ -18,7 +18,7 @@ DBIP="#{SUBNET}.3"
 REPORTSNAME="puppetreports"
 REPORTSIP="#{SUBNET}.4"
 
-AGENTS=["websrv"]
+AGENTS=["node1"]
 
 
 #Generate a host file to share
@@ -70,14 +70,14 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   #   pm.vm.provision :shell, :path => "install_agent_centos.sh"
   # end
 
-  # AGENTS.each_with_index do |agent,index|
-  #   config.vm.define "#{agent}".to_sym do |ag|
-  #       ag.vm.box = "boxcutter/centos72"
-  #       ag.vm.hostname = "#{agent}.#{DOMAIN}"
-  #       ag.vm.network :private_network, ip: "#{SUBNET}.#{index+10}"
-  #       ag.vm.provision :shell, :inline => $set_host_file
-  #       ag.vm.provision :shell, :path => "install_agent_centos.sh"
-  #   end
-  # end  
+  AGENTS.each_with_index do |agent,index|
+    config.vm.define "#{agent}".to_sym do |ag|
+        ag.vm.box = "eurolinux-vagrant/rocky-8"
+        ag.vm.hostname = "#{agent}.#{DOMAIN}"
+        ag.vm.network :private_network, ip: "#{SUBNET}.#{index+10}"
+        ag.vm.provision :shell, :inline => $set_host_file
+        ag.vm.provision :shell, :path => "vagrant_client_install.sh #{MASTERNAME}.#{DOMAIN}"
+    end
+  end  
 
 end
