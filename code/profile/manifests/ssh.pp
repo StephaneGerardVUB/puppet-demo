@@ -1,9 +1,7 @@
 # Manage sshd config
 class profile::ssh (
   Array[String] $allow_users = ['root'],
-)
-{
-
+) {
   package { 'openssh-server':
     ensure => latest,
   }
