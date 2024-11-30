@@ -41,7 +41,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
 
   config.vm.define :puppetmaster do |pm|
     pm.vm.box = "eurolinux-vagrant/rocky-8"
-    config.vm.box_version = "8.10.5"
+    pm.vm.box_version = "8.10.5"
     pm.vm.hostname = "#{MASTERNAME}.#{DOMAIN}"
     pm.vm.network :private_network, ip: "#{MASTERIP}" 
     pm.vm.network :forwarded_port, guest: 5000, host: 5000
@@ -73,10 +73,13 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   AGENTS.each_with_index do |agent,index|
     config.vm.define "#{agent}".to_sym do |ag|
         ag.vm.box = "eurolinux-vagrant/rocky-8"
+        ag.vm.box_version = "8.10.5"
         ag.vm.hostname = "#{agent}.#{DOMAIN}"
         ag.vm.network :private_network, ip: "#{SUBNET}.#{index+10}"
         ag.vm.provision :shell, :inline => $set_host_file
-        ag.vm.provision :shell, :path => "vagrant_client_install.sh #{MASTERNAME}.#{DOMAIN}"
+        dir = File.expand_path("..", __FILE__)
+        puts "DIR: #{dir}"
+        ag.vm.provision :shell, :path => File.join(dir,"vagrant_client_install.sh #{MASTERNAME}.#{DOMAIN}")
     end
   end  
 
