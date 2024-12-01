@@ -1,0 +1,7 @@
+# Puppet hiera settings for a SLURM Compute nodes
+---
+
+# Profiles key may be used to include profile classes
+classes:
+- 'profiles::slurm::common'
+- 'profiles::slurm::login'

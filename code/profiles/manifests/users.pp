@@ -1,6 +1,6 @@
 # @summary Set up users
 # @param users Hash of users to create
-class profile::users (
+class profiles::users (
   Hash $users,
 ) {
   $users.each | String $username, Hash $attrs | {

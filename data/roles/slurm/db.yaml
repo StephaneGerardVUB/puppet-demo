@@ -1,0 +1,7 @@
+# Puppet hiera settings for a Slurm DBD node
+---
+
+# Profiles key may be used to include profile classes
+classes:
+- 'profiles::slurm::common'
+- 'profiles::slurm::slurmdbd'

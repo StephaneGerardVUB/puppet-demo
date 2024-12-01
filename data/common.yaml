@@ -3,18 +3,18 @@ message: "This is the deepest hiera level, common to all nodes"
 
 
 classes:
-  - profile::chrony
-  - profile::ssh
-  #- profile::sudoers
-  - profile::timezone
-  - profile::users
+  - profiles::chrony
+  - profiles::ssh
+  #- profiles::sudoers
+  - profiles::timezone
+  - profiles::users
 
-profile::ssh::allow_users:
+profiles::ssh::allow_users:
   - root
   - user1
   - user2
 
-profile::users::users:
+profiles::users::users:
   user1:
     ensure: present
     uid: 1001
@@ -28,7 +28,7 @@ profile::users::users:
     groups:
       - users
 
-profile::sudoers::users:
+profiles::sudoers::users:
   - user1
   - user2
   - vagrant

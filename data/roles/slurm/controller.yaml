@@ -1,0 +1,12 @@
+# Puppet hiera settings for a SLURM controller = Head node + DBD node
+---
+
+# Profiles key may be used to include profile classes
+classes:
+- 'profiles::slurm::common'
+- 'profiles::slurm::slurmdbd'
+- 'profiles::slurm::slurmctld'
+
+slurm::with_slurmd: false
+slurm::with_slurmctld: true
+slurm::with_slurmdbd: true

@@ -1,4 +1,4 @@
 # Synchronize with NTP
-class profile::chrony {
+class profiles::chrony {
   include chrony
 }

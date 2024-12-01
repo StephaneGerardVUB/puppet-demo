@@ -2,7 +2,7 @@
 # @param users
 #   List of users to allow. This parameter accepts an array of strings representing the usernames that will be granted sudo privileges.
 # @example
-#   class { 'profile::sudoers':
+#   class { 'profiles::sudoers':
 #     users
 #   }
 # @note
@@ -10,7 +10,7 @@
 #   The default value is [].
 #   The secure_path is set to a default value.
 #   The sudoers file is configured to allow the users in the users array to run commands as root without a password.
-class profile::sudoers (
+class profiles::sudoers (
   Array[String] $users = [],
 ) {
   sudo::conf { 'secure_path':

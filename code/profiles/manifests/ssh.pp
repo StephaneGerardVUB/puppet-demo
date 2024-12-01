@@ -2,7 +2,7 @@
 # Document class parameters
 # @param allow_users List of users to allow
 # @example
-#   class { 'profile::ssh':
+#   class { 'profiles::ssh':
 #     allow_users => ['root', 'vagrant'],
 #   }
 # @note
@@ -11,7 +11,7 @@
 #   The default value is ['root'].
 #   The sshd_config file is a template that allows only the users in the allow_users array.
 #   The sshd service is restarted when the sshd_config file changes.
-class profile::ssh (
+class profiles::ssh (
   Array[String] $allow_users = ['root'],
 ) {
   package { 'openssh-server':
