@@ -129,6 +129,18 @@ node 'hypervizor.myorg.be' {
 }
 ```
 
+### Organization of site classes
+
+The classes have two possible origins:
+- classes coming from modules (or **module-classes**);
+- custom classes internal to the site (or **site-classes**).
+
+The module-classes are not present in the Puppet workspace. They will be imported in the workspace of the puppetserver with the r10k command, because they are of course required for the compilation.
+
+Module-classes could be included directly via the roles defined in hiera. But that's not how Puppet sysadmins use to work: they prefer to include the module-classes inside site-classes, and the latter are in turn included in the nodes via hiera. The reason behind this is that you may want to perform on machines some tasks that only make sense at the level of your site. For examples, you might need to perform some site-specific network configuration tasks, or to configure some site internal repositories,... before or after including the module classes. In summary, thanks to site-classes, sysadmins can manage pre-requisites and post-requisites.
+
+Another important point about class organization in this project: it's based on the widely adopted 'role and profile' terminology. A role is made of several profiles. (For those who are familiar with Quattor: a Puppet profile corresponds to a Quattor feature.) On a practical level, you will understand what is a role by looking at its yaml file in hiera ('classes' is the list of profiles), and you have the details of a profile by looking the code of its classe in the code/profiles/<role> directory.
+
 
 ## Testing puppet-demo workspace with Vagrant
 
