@@ -12,6 +12,8 @@ Typical small and simple Puppet workspace to use for demonstrations or as a star
     - [Classification mechanism is details](#classification-mechanism-is-details)
   - [Testing puppet-demo workspace with Vagrant](#testing-puppet-demo-workspace-with-vagrant)
     - [Preparing your laptop for Vagrant](#preparing-your-laptop-for-vagrant)
+    - [Instantiating the vagrant testbed](#instantiating-the-vagrant-testbed)
+    - [Clean-up](#clean-up)
 
 
 
@@ -146,6 +148,8 @@ sudo firewall-cmd --permanent --zone=libvirt --add-service=nfs
 sudo firewall-cmd --reload
 ```
 
+### Instantiating the vagrant testbed
+
 Fork the puppet-demo project and create a local copy of it:
 
 ```
@@ -172,7 +176,27 @@ vagrant status
 You can login to them with this command:
 
 ```
-vagrand ssh <vm_name>
+vagrant ssh <vm_name>
 ```
 
 You can now train yourself by trying to configure resources on the client nodes. You will find a Puppet quick start guide [here](Puppet_Quick_Start.md).
+
+### Clean-up
+
+When you are done with the testbed, you can remove the VMs with:
+
+```
+vagrant destroy <vm_name>
+```
+
+If you still intend to use the testbed in the future, you may want to keep the vagrant box. If you want to remove it:
+
+```
+vagrant box remove <name_vagrant_box_name>
+```
+
+To get the vagrant box name:
+
+```
+vagrant box list
+```
