@@ -1,7 +1,29 @@
 #!/bin/bash
 
+# This script installs Puppet Agent on a client node and configures it to connect to a Puppet Server.
+# It also classifies the node by creating a file /etc/puppetlabs/facter/facts.d/classification.yaml
+# that contains the application context (app), the role it plays (role) in this application context,
+# and the environment it belongs to (env).
+# The script then runs the Puppet Agent for the first time to get a signed certificate.
+# Finally, it enables the puppet agent service and starts it.
+#
+# Usage:
+#   vagrant_client_install.sh <Puppet Server hostname> [app] [role] [env]
+# Example:
+#   vagrant_client_install.sh puppetserver.example.com slurm workernode production
+
+
+# Throw an error if no params provided (mandatory: Puppet Server hostname, optional: application context, role, environment)
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <Puppet Server hostname> [app] [role] [env]" >&2
+    exit 1
+fi
+
 # Processing arguments
 PUPPET_SERVER=$1
+ENC_APP=${2:-unknown}
+ENC_ROLE=${3:-unknown}
+ENC_ENV=${4:-production}
 
 # A bunch of parameters
 PUPPET_RELEASE_MAJOR='8'
@@ -49,9 +71,9 @@ EOF
 mkdir -p /etc/puppetlabs/facter/facts.d
 cat > /etc/puppetlabs/facter/facts.d/classification.yaml << EOF
 ---
-app: slurm
-role: workernode
-env: production
+app: ${ENC_APP}
+role: ${ENC_ROLE}
+env: ${ENC_ENV}
 EOF
 
 # First run of puppet agent -> will get a signed certificate
