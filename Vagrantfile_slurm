@@ -1,0 +1,82 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+SUBNET = "192.168.128"
+DOMAIN = "vm.local"
+
+MASTERNAME = "puppetmaster"
+MASTERIP = "#{SUBNET}.2"
+
+SLURMCTRLNAME = "slurmctrl"
+SLURMCTRLIP = "#{SUBNET}.3"
+
+SLURMLOGINNAME = "slurmlogin"
+SLURMLOGINIP = "#{SUBNET}.4"
+
+SLURMNODENAMEPREFIX = "slurmnode"
+
+SLURMNBNODES = 1
+
+#Generate a host file to share
+$hostfiledata="127.0.0.1 localhost\n#{MASTERIP} #{MASTERNAME}.#{DOMAIN} #{MASTERNAME}"
+$hostfiledata=$hostfiledata+"\n#{SLURMCTRLIP} #{SLURMCTRLNAME}.#{DOMAIN} #{SLURMCTRLNAME}"
+$hostfiledata=$hostfiledata+"\n#{SLURMLOGINIP} #{SLURMLOGINNAME}.#{DOMAIN} #{SLURMLOGINNAME}"
+SLURMNBNODES.times do |index|
+  $hostfiledata=$hostfiledata+"\n#{SUBNET}.#{index+10} #{SLURMNODENAMEPREFIX}#{index}.#{DOMAIN} #{SLURMNODENAMEPREFIX}#{index}"
+end
+
+$set_host_file="cat <<EOF > /etc/hosts\n"+$hostfiledata+"\nEOF\n"
+
+Vagrant.configure "2" do |config|
+
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.qemu_use_session = false
+    libvirt.memory = 4096
+    libvirt.cpus = 2
+  end
+
+  config.vm.define :puppetmaster do |pm|
+    pm.vm.box = "eurolinux-vagrant/rocky-8"
+    pm.vm.box_version = "8.10.5"
+    pm.vm.hostname = "#{MASTERNAME}.#{DOMAIN}"
+    pm.vm.network :private_network, ip: "#{MASTERIP}" 
+    pm.vm.network :forwarded_port, guest: 5000, host: 5000
+    pm.vm.provision :shell, :inline => $set_host_file
+    dir = File.expand_path("..", __FILE__)
+    puts "DIR: #{dir}"
+    pm.vm.provision :shell, :path => File.join(dir, "vagrant_pm_install.sh")
+  end
+
+  config.vm.define :slurmcontroller do |sctrl|
+    sctrl.vm.box = "eurolinux-vagrant/rocky-8"
+    sctrl.vm.box_version = "8.10.5"
+    sctrl.vm.hostname = "#{SLURMCTRLNAME}.#{DOMAIN}"
+    sctrl.vm.network :private_network, ip: "#{SLURMCTRLIP}" 
+    sctrl.vm.network :forwarded_port, guest: 5000, host: 5000
+    sctrl.vm.provision :shell, :inline => $set_host_file
+    dir = File.expand_path("..", __FILE__)
+    puts "DIR: #{dir}"
+    ag.vm.provision :shell do |s|
+      s.path = File.join(dir,"vagrant_client_install.sh")
+      s.args = "#{SLURMCTRLNAME}.#{DOMAIN} slurm controller production"
+    end
+  end
+
+  # AGENTS.each_with_index do |agent,index|
+  #   config.vm.define "#{agent}".to_sym do |ag|
+  #       ag.vm.box = "eurolinux-vagrant/rocky-8"
+  #       ag.vm.box_version = "8.10.5"
+  #       ag.vm.hostname = "#{agent}.#{DOMAIN}"
+  #       ag.vm.network :private_network, ip: "#{SUBNET}.#{index+10}"
+  #       ag.vm.provision :shell, :inline => $set_host_file
+  #       dir = File.expand_path("..", __FILE__)
+  #       puts "DIR: #{dir}"
+  #       ag.vm.provision :shell do |s|
+  #         s.path = File.join(dir,"vagrant_client_install.sh")
+  #         s.args = "#{MASTERNAME}.#{DOMAIN}"
+  #       end
+  #   end
+  # end  
+
+end
