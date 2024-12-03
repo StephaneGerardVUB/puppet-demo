@@ -20,3 +20,4 @@ mod 'puppet-epel', '5.0.0'
 mod 'saz-limits', '3.1.0'
 #mod 'crayfishx-firewalld', '3.4.0' -> deprecated, not compatible with EL9
 mod 'bodgit-rngd', '3.0.1'
+mod 'puppetlabs-concat', '7.4.0'
