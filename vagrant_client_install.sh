@@ -27,7 +27,7 @@ ENC_ENV=${4:-production}
 
 # A bunch of parameters
 PUPPET_RELEASE_MAJOR='8'
-OS_RELEASE_MAJOR='8'
+OS_RELEASE_MAJOR='9'
 GIT_ACCOUNT='StephaneGerardVUB'
 GIT_REPO='puppet-demo'
 PUPPET_DEFAULT_ENV='production'
@@ -42,15 +42,18 @@ fi
 # Install Puppet repository
 rpm -Uvh https://yum.puppet.com/puppet${PUPPET_RELEASE_MAJOR}-release-el-${OS_RELEASE_MAJOR}.noarch.rpm
 
+# Install EPEL repository
+dnf install -y epel-release
+
 # Install Puppet Server and some other tools
-yum install -y puppet-agent
+dnf install -y puppet-agent
 
 # Some more packages depending on the OS major release
 if [ ${OS_RELEASE_MAJOR} -eq 8 ]; then
-    yum install -y redhat-lsb-core
+    dnf install -y redhat-lsb-core
 fi
 if [ ${OS_RELEASE_MAJOR} -eq 9 ]; then
-    yum install -y lsb_release
+    dnf install -y lsb_release
 fi
 
 
