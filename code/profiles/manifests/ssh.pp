@@ -19,7 +19,7 @@ class profiles::ssh (
   }
 
   file { '/etc/ssh/sshd_config':
-    content => epp('profile/ssh/sshd_config.epp', { 'allow_users' => $allow_users, }),
+    content => epp('profiles/ssh/sshd_config.epp', { 'allow_users' => $allow_users, }),
     notify  => Service['sshd'],
   }
 
