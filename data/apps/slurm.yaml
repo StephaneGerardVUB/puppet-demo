@@ -4,6 +4,8 @@ msg: "serving %{::role} role"
 
 # SLURM version
 slurm::version: '24.05-latest'
+# src_checksum empty string -> we don't perform checksum tests on the tarball
+slurm::src_checksum: ''
 
 # SLURM general settings
 slurm::uid: 900
