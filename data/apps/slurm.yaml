@@ -3,7 +3,7 @@
 msg: "serving %{::role} role"
 
 # SLURM version
-slurm::version: '24.05.4'
+slurm::version: '24.05-latest'
 
 # SLURM general settings
 slurm::uid: 900
