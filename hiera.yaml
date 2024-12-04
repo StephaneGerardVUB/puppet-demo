@@ -19,6 +19,10 @@ hierarchy:
     paths:
       - "apps/%{::app}.yaml"
 
+  - name: "Per-application and the per OS data"
+    paths:
+      - "apps/%{::app}/os/%{facts.os.release.major}.yaml"
+
   - name: "Per-OS-major-release data"
     path: "oses/%{facts.os.family}/%{facts.os.release.major}.yaml"
 
