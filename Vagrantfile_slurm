@@ -63,20 +63,20 @@ Vagrant.configure "2" do |config|
     end
   end
 
-  # AGENTS.each_with_index do |agent,index|
-  #   config.vm.define "#{agent}".to_sym do |ag|
-  #       ag.vm.box = "eurolinux-vagrant/rocky-8"
-  #       ag.vm.box_version = "8.10.5"
-  #       ag.vm.hostname = "#{agent}.#{DOMAIN}"
-  #       ag.vm.network :private_network, ip: "#{SUBNET}.#{index+10}"
-  #       ag.vm.provision :shell, :inline => $set_host_file
-  #       dir = File.expand_path("..", __FILE__)
-  #       puts "DIR: #{dir}"
-  #       ag.vm.provision :shell do |s|
-  #         s.path = File.join(dir,"vagrant_client_install.sh")
-  #         s.args = "#{MASTERNAME}.#{DOMAIN}"
-  #       end
-  #   end
-  # end  
+  SLURMNBNODES.times do |index|
+    config.vm.define "#{SLURMNODENAMEPREFIX}#{index}".to_sym do |node|
+        node.vm.box = "eurolinux-vagrant/rocky-9"
+        node.vm.box_version = "9.4.5"
+        node.vm.hostname = "#{SLURMNODENAMEPREFIX}#{index}.#{DOMAIN}"
+        node.vm.network :private_network, ip: "#{SUBNET}.#{index+10}"
+        node.vm.provision :shell, :inline => $set_host_file
+        dir = File.expand_path("..", __FILE__)
+        puts "DIR: #{dir}"
+        node.vm.provision :shell do |s|
+          s.path = File.join(dir,"vagrant_client_install.sh")
+          s.args = "#{MASTERNAME}.#{DOMAIN} slurm node production"
+        end
+    end
+  end  
 
 end
