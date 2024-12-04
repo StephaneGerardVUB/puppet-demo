@@ -43,7 +43,7 @@ slurm::acct_gatherenergytype: 'rapl'
 #slurm::defmempercpu: 4096
 #slurm::maxmempercpu: 27000
 slurm::schedulertype: 'backfill'
-slurm::selecttype: 'cons_res'
+slurm::selecttype: 'cons_tres'
 slurm::selecttype_params:
   - 'CR_Core_Memory'
   - 'CR_CORE_DEFAULT_DIST_BLOCK'
