@@ -2,6 +2,9 @@
 ---
 msg: "serving %{::role} role"
 
+# SLURM version
+slurm::version: '24.05.4'
+
 # SLURM general settings
 slurm::uid: 900
 slurm::gid: 900
