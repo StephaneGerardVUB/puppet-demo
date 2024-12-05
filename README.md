@@ -171,7 +171,7 @@ git clone https://github.com/<your_git_account>/puppet-demo.git
 Instantiate the testbed:
 
 ```
-cd puppet-demon
+cd puppet-demo
 vagrant up
 ```
 
