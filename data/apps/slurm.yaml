@@ -76,6 +76,7 @@ slurm::prologflags:
 slurm::messagetimeout: 30
 slurm::resumetimeout: 600
 #slurm::taskplugin: ['affinity', 'cgroup']
+slurm::taskplugin: []
 slurm::taskpluginparams :
   - 'none'
 
