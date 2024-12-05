@@ -11,7 +11,7 @@ slurm::src_checksum: ''
 slurm::clustername: 'cluster'
 slurm::controlmachine: 'slurmctrl'
 slurm::nodes:
-  - 'slurmnode0':
+  'slurmnode0':
     comment: 'Compute node 0'
     content: 'CPUs=2 Sockets=2 CoresPerSocket=2 ThreadsPerCore=1 RealMemory=4096 State=UNKNOWN'
 slurm::uid: 900
