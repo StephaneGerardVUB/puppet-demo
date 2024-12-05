@@ -79,22 +79,22 @@ slurm::taskplugin: ['affinity', 'cgroup']
 slurm::taskpluginparams :
   - 'none'
 
-###############################
-### cgroup.conf settings     ###
-#################################
-# new default in 18.08 SLURM and related to bug
-# https://bugs.schedmd.com/show_bug.cgi?id=5507
-slurm::cgroup_constrainkmemspace: false
-# ensure job constraints on GRES such as GPUs
-slurm::cgroup_constraindevices: true
-slurm::cgroup_alloweddevices:
-  - '/dev/null'
-  - '/dev/urandom'
-  - '/dev/zero'
-  - '/dev/sda*'
-  - '/dev/cpu/*/*'
-  - '/dev/pts/*'
-  - '/dev/nvme0*'
+# ###############################
+# ### cgroup.conf settings     ###
+# #################################
+# # new default in 18.08 SLURM and related to bug
+# # https://bugs.schedmd.com/show_bug.cgi?id=5507
+# slurm::cgroup_constrainkmemspace: false
+# # ensure job constraints on GRES such as GPUs
+# slurm::cgroup_constraindevices: true
+# slurm::cgroup_alloweddevices:
+#   - '/dev/null'
+#   - '/dev/urandom'
+#   - '/dev/zero'
+#   - '/dev/sda*'
+#   - '/dev/cpu/*/*'
+#   - '/dev/pts/*'
+#   - '/dev/nvme0*'
 
 
 ### PAM Pluggable Authentication Modules (PAM)
