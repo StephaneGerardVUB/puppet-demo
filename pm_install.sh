@@ -1,12 +1,65 @@
 #!/bin/bash
 
-# A bunch of parameters
-PUPPET_RELEASE_MAJOR='8'
-OS_RELEASE_MAJOR='8'
-GIT_ACCOUNT='StephaneGerardVUB'
-GIT_REPO='puppet-demo'
-PUPPET_DEFAULT_ENV='production'
+# This script takes optional arguments:
+# - Puppet release major version (default: 8)
+# - OS release major version (default: 8)
+# - Git account (default: StephaneGerardVUB)
+# - Git repository (default: puppet-demo)
+# - Default Puppet environment (default: production)
+
+
+# Write a usage function
+usage() {
+    echo "Usage: $0 [OPTION]..."
+    echo "Install and configure a Puppet Master."
+    echo "  --puppet-release-major=RELEASE_MAJOR  Puppet release major version (default: 8)"
+    echo "  --os-release-major=RELEASE_MAJOR      OS release major version (default: 8)"
+    echo "  --git-account=ACCOUNT                 Git account (default: StephaneGerardVUB)"
+    echo "  --git-repo=REPO                       Git repository (default: puppet-demo)"
+    echo "  --puppet-default-env=ENV              Default Puppet environment (default: production)"
+    echo "  --help                                Display this help message."
+    exit 1
+}
+
+# Parse the command line options
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --help)
+            usage
+            ;;
+        --puppet-release-major=*)
+            PUPPET_RELEASE_MAJOR="${1#*=}"
+            ;;
+        --os-release-major=*)
+            OS_RELEASE_MAJOR="${1#*=}"
+            ;;
+        --git-account=*)
+            GIT_ACCOUNT="${1#*=}"
+            ;;
+        --git-repo=*)
+            GIT_REPO="${1#*=}"
+            ;;
+        --puppet-default-env=*)
+            PUPPET_DEFAULT_ENV="${1#*=}"
+            ;;
+        *)
+            printf "***************************\n"
+            printf "* Error: Invalid argument.*\n"
+            printf "***************************\n"
+            usage
+            exit 1
+    esac
+    shift
+done
+
+# Default values for optional arguments
+PUPPET_RELEASE_MAJOR=${PUPPET_RELEASE_MAJOR:-8}
+OS_RELEASE_MAJOR=${OS_RELEASE_MAJOR:-8}
+GIT_ACCOUNT=${GIT_ACCOUNT:-StephaneGerardVUB}
+GIT_REPO=${GIT_REPO:-puppet-demo}
+PUPPET_DEFAULT_ENV=${PUPPET_DEFAULT_ENV:-production}
 PUPPET_SERVER=$(hostname -f)
+
 
 # Ensure the script is run as root
 if [ "$(id -u)" -ne 0 ]; then
@@ -18,7 +71,7 @@ fi
 rpm -Uvh https://yum.puppet.com/puppet${PUPPET_RELEASE_MAJOR}-release-el-${OS_RELEASE_MAJOR}.noarch.rpm
 
 # Install Puppet Server and some other tools
-yum install -y puppetserver git gcc rsync
+dnf install -y puppetserver git gcc rsync
 
 # Add puppet binaries to PATH via .bash_profile
 echo "export PATH=$PATH:/opt/puppetlabs/bin:/opt/puppetlabs/puppet/bin" >> /root/.bash_profile
