@@ -56,14 +56,14 @@ server=<fqdn_pupper_server>
 ## Node classification
 
 **Classification** has a well-defined meaning in the Puppet terminology. It must be understood as "assigning classes to nodes".
-There infinite ways of doing this. The solution being considered in this project is to use the provisionning subsystem to inject a yaml files in the node in order to create custom facts. The homebrewed facts mainly consist in 3 pieces of information:
+There are infinite ways of doing this. The solution being considered in this project is to use the provisionning subsystem to inject a yaml files in the node in order to create custom facts. These homebrewed facts mainly consist in 3 pieces of information:
 - the application context in which the machine lives (**app**);
 - the role played by the machine in this context (**role**);
 - the environment of the machine (**environment**).
 
-Let's illustrate this. Consider for example an hypervizor in a production OpenNebula farm. We can then describe it like this:
-* app => 'opennebula'
-* role => 'hypervizor'
+Let's illustrate this. Consider for example a workernode in a production SLURM cluster. We can then describe it like this:
+* app => 'slurm'
+* role => 'node'
 * environment => 'production'
 
 With the "apps" and "roles" being declared as levels in ```hiera.yaml```, we can now assign site-classes to machines. The details of how this is precisely done will be explained below in a sub-section.
@@ -72,8 +72,8 @@ Here is the content of the yaml file that provisioning system will have to injec
 
 ```
 ---
-app: opennebula
-role: hypervizor
+app: slurm
+role: node
 env: production
 ```
 
@@ -104,28 +104,28 @@ This code tells to Puppet to create the list 'classes' by collecting, with the h
 ```
 
 Now, in the ```data``` directory, you might find these yaml files:
-- roles/opennebula/hypervizor.yaml
-- apps/opennebula.yaml
+- roles/slurm/node.yaml
+- apps/slurm.yaml
 
 with the following contents:
 
 ```
 ---
 classes:
-  - opennebula::hypervizor
+  - slurm::node
 ```
 
 ```
 classes:
-  - opennebula::common
+  - slurm::common
 ```
 
 Once the lookup function has collected all the elements of the 'classes' array, it returns the array itself that is applied the 'include' method, and that amounts to have the following code in site.pp:
 
 ```
-node 'hypervizor.myorg.be' {
-    include opennebula::common
-    include opennebula::hypervizor
+node 'slurmnode01.myorg.be' {
+    include slurm::common
+    include slurm::node
 }
 ```
 
@@ -135,11 +135,11 @@ The classes have two possible origins:
 - classes coming from modules (or **module-classes**);
 - custom classes internal to the site (or **site-classes**).
 
-The module-classes are not present in the Puppet workspace. They will be imported in the workspace of the puppetserver with the r10k command, because they are of course required for the compilation.
+The module-classes are not present in the Puppet workspace. They will be imported in the workspace of the puppetserver with the ```r10k``` command, because they are of course required for the compilation.
 
-Module-classes could be included directly via the roles defined in hiera. But that's not how Puppet sysadmins use to work: they prefer to include the module-classes inside site-classes, and the latter are in turn included in the nodes via hiera. The reason behind this is that you may want to perform on machines some tasks that only make sense at the level of your site. For examples, you might need to perform some site-specific network configuration tasks, or to configure some site internal repositories,... before or after including the module classes. In summary, thanks to site-classes, sysadmins can manage pre-requisites and post-requisites.
+Module-classes could be included directly via the roles defined in hiera. But that's not how Puppet sysadmins use to work: they prefer to include the module-classes inside site-classes, and the latter are in turn included in the nodes via hiera. The reason behind this is that you may want to perform on nodes some tasks that only make sense at the level of your site. For examples, you might need to perform some site-specific network configuration tasks, or to configure some site internal repositories,... before or after including the module classes. In summary, thanks to site-classes, sysadmins can manage pre-requisites and post-requisites.
 
-Another important point about class organization in this project: it's based on the widely adopted 'role and profile' terminology. A role is made of several profiles. (For those who are familiar with Quattor: a Puppet profile corresponds to a Quattor feature.) On a practical level, you will understand what is a role by looking at its yaml file in hiera ('classes' is the list of profiles), and you have the details of a profile by looking the code of its classe in the code/profiles/<role> directory.
+Another important point about class organization in this project: it's based on the widely adopted **role and profile** terminology. A role is made of several profiles. (For those who are familiar with Quattor: a Puppet profile corresponds to a Quattor feature.) On a practical level, you will understand what is a role by looking at its yaml file in hiera ('classes' is the list of profiles), and you have the details of a profile by looking the code of its classe in the code/profiles/<role> directory.
 
 
 ## Testing puppet-demo workspace with Vagrant
