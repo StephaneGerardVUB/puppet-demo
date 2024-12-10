@@ -1,6 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# Check that required vagrant plugins are installed
+["vagrant-hosts", "vagrant-libvirt"].each do |plugin|
+  abort "Please install the #{plugin} Vagrant plugin with 'vagrant pluging install #{plugin}'" unless Vagrant.has_plugin?("#{plugin}")
+end
 
 SUBNET = "192.168.128"
 DOMAIN = "vm.local"

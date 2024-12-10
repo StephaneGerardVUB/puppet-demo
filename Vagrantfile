@@ -3,6 +3,11 @@
 
 # Main source of inspiration: https://github.com/lbernail/vagrant-puppet/tree/master
 
+# Check that required vagrant plugins are installed
+["vagrant-hosts", "vagrant-libvirt"].each do |plugin|
+  abort "Please install the #{plugin} Vagrant plugin with 'vagrant pluging install #{plugin}'" unless Vagrant.has_plugin?("#{plugin}")
+end
+
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
@@ -21,16 +26,6 @@ REPORTSIP="#{SUBNET}.4"
 AGENTS=["node1"]
 
 
-#Generate a host file to share
-$hostfiledata="127.0.0.1 localhost\n#{MASTERIP} #{MASTERNAME}.#{DOMAIN} #{MASTERNAME}"
-$hostfiledata=$hostfiledata+"\n#{DBIP} #{DBNAME}.#{DOMAIN} #{DBNAME}"
-$hostfiledata=$hostfiledata+"\n#{REPORTSIP} #{REPORTSNAME}.#{DOMAIN} #{REPORTSNAME}"
-AGENTS.each_with_index do |agent,index|
-  $hostfiledata=$hostfiledata+"\n#{SUBNET}.#{index+10} #{agent}.#{DOMAIN} #{agent}"
-end
-
-$set_host_file="cat <<EOF > /etc/hosts\n"+$hostfiledata+"\nEOF\n"
-
 Vagrant.configure VAGRANTFILE_API_VERSION do |config|
 
   config.vm.provider :libvirt do |libvirt|
@@ -45,7 +40,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
     pm.vm.hostname = "#{MASTERNAME}.#{DOMAIN}"
     pm.vm.network :private_network, ip: "#{MASTERIP}" 
     pm.vm.network :forwarded_port, guest: 5000, host: 5000
-    pm.vm.provision :shell, :inline => $set_host_file
+    pm.vm.provision :hosts, :sync_hosts => true
     dir = File.expand_path("..", __FILE__)
     puts "DIR: #{dir}"
     pm.vm.provision :shell, :path => File.join(dir, "vagrant_pm_install.sh")
@@ -56,7 +51,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   #   config.vm.box_version = "8.10.5"
   #   pm.vm.hostname = "#{DBNAME}.#{DOMAIN}"
   #   pm.vm.network :private_network, ip: "#{DBIP}" 
-  #   pm.vm.provision :shell, :inline => $set_host_file
+  #   pm.vm.provision :hosts, :sync_hosts => true
   #   pm.vm.provision :shell, :path => "install_agent_centos.sh"
   # end
 
@@ -66,7 +61,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   #   pm.vm.hostname = "#{REPORTSNAME}.#{DOMAIN}"
   #   pm.vm.network :private_network, ip: "#{REPORTSIP}" 
   #   pm.vm.network :forwarded_port, guest: 5000, host: 5001
-  #   pm.vm.provision :shell, :inline => $set_host_file
+  #   pm.vm.provision :hosts, :sync_hosts => true
   #   pm.vm.provision :shell, :path => "install_agent_centos.sh"
   # end
 
@@ -76,7 +71,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
         ag.vm.box_version = "8.10.5"
         ag.vm.hostname = "#{agent}.#{DOMAIN}"
         ag.vm.network :private_network, ip: "#{SUBNET}.#{index+10}"
-        ag.vm.provision :shell, :inline => $set_host_file
+        pm.vm.provision :hosts, :sync_hosts => true
         dir = File.expand_path("..", __FILE__)
         puts "DIR: #{dir}"
         ag.vm.provision :shell do |s|
