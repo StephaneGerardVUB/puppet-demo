@@ -1,0 +1,197 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+## Inspired from https://github.com/ULHPC/puppet-slurm/blob/devel/Vagrantfile
+
+##-- Check that required vagrant plugins are installed
+["vagrant-hosts", "vagrant-libvirt"].each do |plugin|
+  abort "Please install the #{plugin} Vagrant plugin with 'vagrant pluging install #{plugin}'" unless Vagrant.has_plugin?("#{plugin}")
+end
+
+##-- Global variables
+TOP_SRCDIR     = File.expand_path File.dirname(__FILE__)
+TOP_CONFDIR    = File.join(TOP_SRCDIR, 'tests', 'vagrant')
+TOP_PUPPET_DIR = File.join(TOP_CONFDIR, 'puppet')
+SCRIPTDIR      = File.join(TOP_CONFDIR, 'scripts')
+config_file    = File.join(TOP_CONFDIR, 'config.yaml')
+
+##-- Defaults
+DEFAULT_SETTINGS = {
+  # Default images settings
+  :defaults => {
+    :os     => :rocky9,
+    :ram    => 512,
+    :vcpus  => 2,
+    :vbguest_auto_update => true,
+    :role   => 'default',
+    :nnodes => 2,          # Number of computing nodes
+  },
+  # Default domain settings
+  :network => {
+    :domain => 'vm.local',
+    :range  => '192.168.128.0/24',
+  },
+  # Default Boxes
+  :boxes => {
+    :rocky8  => 'eurolinux-vagrant/rocky-8',
+    :rocky9  => 'eurolinux-vagrant/rocky-9'
+  },
+  # Characteristics of the virtual computing nodes, from slurm point of view
+  :nodes => {
+    :cpus             => 2,
+    :sockets          => 1,
+    :ram              => 512,
+    :realmemory       => 400,
+    :cores_per_socket => 2,
+    :thread_per_core  => 1,
+    :state            => 'UNKNOWN'
+  },
+
+  # General Slurm Settings
+  :slurm => {
+    :clustername    => 'cluster',
+    :partitions => {
+      'DEFAULT'=> {
+        :content => 'State=UP AllowGroups=clusterusers AllowAccounts=ALL DisableRootJobs=YES OverSubscribe=NO',
+      },
+      'admin' => {
+        :priority => 100,
+        :content  => "Hidden=YES DefaultTime=0-10:00:00 MaxTime=5-00:00:00 MaxNodes=UNLIMITED  AllowQos=qos-admin",
+      },
+      'interactive' => {
+        :nodes    => 1,
+        :priority => 20,
+        :content  => 'DefaultTime=0-1:00:00  MaxTime=0-4:00:00  AllowQos=qos-besteffort,qos-interactive',
+      },
+      'batch' => {
+        :nodes => 2,
+        :priority => 20,
+        :content => 'DefaultTime=0-2:00:00  MaxTime=5-00:00:00 MaxNodes=UNLIMITED Default=YES AllowQos=qos-besteffort,qos-batch'
+      },
+    },
+  },
+  # virtual images to deploy
+  # <name>:
+  #   :hostname: <hostname>
+  #   :desc: <VM-description>
+  #   :os: <os>       # from the configured boxes
+  #   :ram: <ram>
+  #   :vcpus: <vcpus>
+  #   :role: <role>   # supported: [ 'XX', 'YY' ]
+  :vms => {
+    # Puppet Master
+    'puppetmaster' => {
+      :ram => 1024, :vcpus => 1, :desc => "Puppet Master",
+      :role => 'puppetmaster'
+      :os => :rocky8
+    },
+    # Slurm controller (primary)
+    'slurmctrl' => {
+      :ram => 2048, :vcpus => 2, :desc => "Slurm Controller #1 (primary)",
+      :role => 'controller'
+    },
+    # 'slurm-db' => {
+    #   :ram => 1024, :vcpus => 1, :desc => "Slurm Database",
+    #   :role => 'db'
+    # },
+    'slurmlogin' => {
+      :hostname => 'slurmlogin', :ram => 1024, :vcpus => 1, :desc => "Cluster frontend",
+      :role => 'login'
+    },
+    #  /!\ Computing nodes are added afterwards depending on the number of nodes / partitions to test.
+  },
+}
+
+##-- Load the settings (eventually overwritten using values from the yaml file 'config.yaml')
+settings = DEFAULT_SETTINGS.clone
+if File.exist?(config_file)
+  config = YAML::load_file config_file
+  settings.deep_merge!( config ) if config
+end
+abort "Undefined settings" if settings.nil?
+
+##-- Finalize settings
+
+# Config of boxes
+defaults   = settings[:defaults]
+network    = settings[:network]
+slurm      = settings[:slurm]
+nodes      = settings[:nodes]
+puppet_dir = File.join('tests', 'vagrant', 'puppet') # Local puppet directory
+
+controller_vm = settings[:vms].select { |k,v| v[:role].include?('controller')}.keys.first
+login_vm      = settings[:vms].select { |k,v| v[:role].include?('login')}.keys.first
+db_vm         = settings[:vms].select { |k,v| v[:role].include?('db')}.keys.first
+
+# Workernodes settings
+num_nodes = default_num_nodes = defaults[:nnodes] ? defaults[:nnodes] : 1
+(1..num_nodes).each do |n|
+  settings[:vms]["node-#{n}"] = {
+    :ram   => nodes[:ram],
+    :vcpus => nodes[:cpus],
+    :desc  => "Computing Node \##{n}",
+    :role  => 'node',
+  } unless settings[:vms]["node#{n}"]
+end
+
+# Network settings
+ipaddr   = IPAddr.new network[:range]
+ip_range = ipaddr.to_range.to_a
+ip_index = {
+  :puppetmaster => 1,
+  :login      => 2,
+  :controller => 11,
+  :db         => 15,
+  :node       => 101
+}
+
+##-- Vagrant configuration
+Vagrant.configure "2" do |config|
+
+  settings[:vms].each do |name, node|
+    hostname = node[:hostname] ? node[:hostname] : name
+    domain   = network[:domain]
+    fqdn     =    "#{hostname}.#{domain}"
+    boxname  =  defaults[:os].to_s.downcase.gsub(/([^\d]+)(\d+)/, '\\1-\\2')
+    name     = boxname if name == 'default'
+    os       =    node[:os]       ? node[:os].to_sym : defaults[:os].to_sym
+    ram      =    node[:ram]      ? node[:ram]       : defaults[:ram]
+    vcpus    =    node[:vcpus]    ? node[:vcpus]     : defaults[:vcpus]
+    role     =    node[:role]     ? node[:role]      : 'default'
+    desc     =    node[:desc]     ? node[:desc]      : 'n/a'
+
+    abort "Non-existing box OS '#{os}' for the VM '#{name}'" if  settings[:boxes][os.to_sym].nil?
+    abort "Empty IP address range" if ip_range.empty?
+    abort "Unknown role '#{role}' for the VM '#{name}'" unless ip_index[role.to_sym]
+    ip = ip_range[ ip_index[role.to_sym].to_i ].to_s
+    ip_index[role.to_sym] += 1   # increment index for the next VM of this type
+
+    # Puppet provisioning script path and args
+    dir = File.expand_path("..", __FILE__)
+    pp_prov_script_path = File.join(dir, 'vagrant_client_install.sh')
+    pp_prov_script_args = "puppetmaster.#{domain} slurm #{role} production"
+    if [ 'puppetmaster' ].include?( role )
+      pp_prov_script_path = File.join(dir, 'vagrant_pm_install.sh')
+      pp_prov_script_args = ''
+    end
+
+    config.vm.define "#{name}" do |c|
+      c.vm.box      = settings[:boxes][os.to_sym]
+      c.vm.hostname = "#{fqdn}"
+      c.vm.network :private_network, :ip => ip
+      c.vm.provision :hosts, :sync_hosts => true, :add_localhost_hostnames => false
+      c.vm.provision :shell do |s|
+        s.path = pp_prov_script_path
+        s.args = pp_prov_script_args
+      end
+      c.vm.provider :libvirt do |libvirt|
+        libvirt.qemu_use_session = false
+        libvirt.memory = ram.to_s
+        libvirt.cpus = vcpus.to_s
+      end
+
+    end
+  end
+end
+
+
