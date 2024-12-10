@@ -138,8 +138,8 @@ end
 ipaddr   = IPAddr.new network[:range]
 ip_range = ipaddr.to_range.to_a
 ip_index = {
-  :puppetmaster => 1,
-  :login      => 2,
+  :puppetmaster => 2,
+  :login      => 3,
   :controller => 11,
   :db         => 15,
   :node       => 101
