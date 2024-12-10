@@ -81,7 +81,7 @@ DEFAULT_SETTINGS = {
   :vms => {
     # Puppet Master
     'puppetmaster' => {
-      :ram => 1024, :vcpus => 1, :desc => "Puppet Master",
+      :ram => 2048, :vcpus => 1, :desc => "Puppet Master",
       :role => 'puppetmaster',
       :os => :rocky8
     },

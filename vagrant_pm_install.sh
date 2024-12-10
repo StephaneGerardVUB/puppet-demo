@@ -55,7 +55,7 @@ vardir=/opt/puppetlabs/server/data/puppetserver
 EOF
 
 # Configure Puppet Server memory allocation
-sed -i 's/JAVA_ARGS=.*/JAVA_ARGS="-Xms2g -Xmx2g -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"/' /etc/sysconfig/puppetserver
+sed -i 's/JAVA_ARGS=.*/JAVA_ARGS="-Xms1g -Xmx1g -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"/' /etc/sysconfig/puppetserver
 
 # Set Puppet Server to start on boot
 systemctl enable puppetserver
