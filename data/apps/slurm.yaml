@@ -16,6 +16,7 @@ slurm::gid: 900
 slurm::service_manage: true
 
 # SLURM nodes and partitions and QOS
+slurm::manage_accounting: true
 slurm::nodes:
   'node-1':
     comment: 'Compute node 1'
