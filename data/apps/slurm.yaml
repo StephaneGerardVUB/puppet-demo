@@ -15,7 +15,7 @@ slurm::uid: 900
 slurm::gid: 900
 slurm::service_manage: true
 
-# SLURM nodes and partitions
+# SLURM nodes and partitions and QOS
 slurm::nodes:
   'node-1':
     comment: 'Compute node 1'
@@ -37,6 +37,16 @@ slurm::partitions:
     nodes: 'node-[1-2]'
     priority: 20
     content: 'DefaultTime=0-2:00:00  MaxTime=5-00:00:00 MaxNodes=UNLIMITED Default=YES'
+slurm::qos:
+  'qos-besteffort':
+    priority: 0
+  'qos-batch':
+    priority: 100
+    preempt: 'qos-besteffort'
+  'qos-admin':
+    priority: 1000
+  'qos-interactive':
+    preempt: 'qos-besteffort'
 
 ## SlurmDBD settings
 slurm::slurmdbd::dbdhost: 'localhost'
