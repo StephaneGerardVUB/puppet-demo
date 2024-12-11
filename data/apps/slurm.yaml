@@ -11,13 +11,32 @@ slurm::src_checksum: ''
 slurm::clustername: 'cluster'
 slurm::controlmachine: 'slurmctrl'
 slurm::accountingstoragehost: 'slurmctrl'
-slurm::nodes:
-  'node-0':
-    comment: 'Compute node 0'
-    content: 'CPUs=2 Sockets=2 CoresPerSocket=1 ThreadsPerCore=1 RealMemory=4096 State=UNKNOWN'
 slurm::uid: 900
 slurm::gid: 900
 slurm::service_manage: true
+
+# SLURM nodes and partitions
+slurm::nodes:
+  'node-1':
+    comment: 'Compute node 1'
+    content: 'CPUs=2 Sockets=2 CoresPerSocket=1 ThreadsPerCore=1 RealMemory=4096 State=UNKNOWN'
+  'node-2':
+    comment: 'Compute node 2'
+    content: 'CPUs=2 Sockets=2 CoresPerSocket=1 ThreadsPerCore=1 RealMemory=4096 State=UNKNOWN'
+slurm::partitions:
+  DEFAULT:
+    content: 'State=UP AllowGroups=clusterusers AllowAccounts=ALL DisableRootJobs=YES OverSubscribe=NO'
+  admin:
+    priority: 100
+    content: 'Hidden=YES DefaultTime=0-10:00:00 MaxTime=5-00:00:00 MaxNodes=UNLIMITED  AllowQos=qos-admin'
+  interactive:
+    nodes: 1
+    priority: 20
+    content: 'DefaultTime=0-1:00:00  MaxTime=0-4:00:00  AllowQos=qos-besteffort,qos-interactive'
+  batch:
+    nodes: 2
+    priority: 20
+    content: 'DefaultTime=0-2:00:00  MaxTime=5-00:00:00 MaxNodes=UNLIMITED Default=YES'
 
 ## SlurmDBD settings
 slurm::slurmdbd::dbdhost: 'localhost'
