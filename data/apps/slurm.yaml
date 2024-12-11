@@ -30,11 +30,11 @@ slurm::partitions:
     priority: 100
     content: 'Hidden=YES DefaultTime=0-10:00:00 MaxTime=5-00:00:00 MaxNodes=UNLIMITED  AllowQos=qos-admin'
   'interactive':
-    nodes: 1
+    nodes: 'node-1'
     priority: 20
     content: 'DefaultTime=0-1:00:00  MaxTime=0-4:00:00  AllowQos=qos-besteffort,qos-interactive'
   'batch':
-    nodes: 2
+    nodes: 'node-[1-2]'
     priority: 20
     content: 'DefaultTime=0-2:00:00  MaxTime=5-00:00:00 MaxNodes=UNLIMITED Default=YES'
 
