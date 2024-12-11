@@ -26,6 +26,8 @@ slurm::slurmdbd::storagehost: "%{facts.networking.hostname}"
 slurm::slurmdbd::storageloc: 'slurm'
 slurm::slurmdbd::storageport: 3306
 slurm::slurmdbd::storagetype: 'mysql'
+slurm::slurmdbd::innodb_buffer_pool_size: '2048M'
+slurm::slurmdbd::innodb_log_file_size: '64M'
 
 
 # MUNGE Authentication
