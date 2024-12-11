@@ -8,4 +8,4 @@ classes:
 
 slurm::with_slurmd: false
 slurm::with_slurmctld: true
-slurm::with_slurmdbd: false
+slurm::with_slurmdbd: true
