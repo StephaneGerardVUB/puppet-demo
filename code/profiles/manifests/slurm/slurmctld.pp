@@ -7,5 +7,4 @@ class profiles::slurm::slurmctld {
     }
   }
   include slurm::slurmctld
-  include profiles::slurm::accounting
 }
