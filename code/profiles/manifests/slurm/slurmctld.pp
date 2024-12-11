@@ -6,5 +6,15 @@ class profiles::slurm::slurmctld {
       ensure => present,
     }
   }
+
+  slurm::acct::qos { 'qos-interactive':
+    ensure   => 'present',
+    priority => 20,
+    options  => {
+      preempt  => 'qos-besteffort',
+      grpnodes => 30,
+    },
+  }
+
   include slurm::slurmctld
 }
