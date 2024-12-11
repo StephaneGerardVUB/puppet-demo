@@ -7,6 +7,11 @@ class profiles::slurm::slurmctld {
     }
   }
 
+  slurm::acct::qos { 'qos-besteffort':
+    ensure   => 'present',
+    priority => 0,
+  }
+
   slurm::acct::qos { 'qos-interactive':
     ensure   => 'present',
     priority => 20,
